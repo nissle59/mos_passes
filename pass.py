@@ -128,7 +128,7 @@ if __name__ == "__main__":
         stat = pmos.get_pass_info(f"БА {i}")
         if stat:
             if isinstance(stat, dict):
-                print(f"{pmos.total_passed} --- БА {i}: {stat['vin']} :: {stat['regNum']} :: {stat['statusCode']}")
+                LOGGER.info(f"{pmos.total_passed} --- БА {i}: {stat['vin']} :: {stat['regNum']} :: {stat['statusCode']}")
                 asyncio.run(db.set_pass(stat))
         else:
-            print(f'БА {i} Не существует')
+            LOGGER.info(f'{pmos.total_passed} --- БА {i} Не существует')
