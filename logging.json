@@ -1,0 +1,42 @@
+{
+    "version": 1,
+    "disable_existing_loggers": true,
+    "formatters": {
+        "standard": {
+            "format": "%(asctime)s [%(levelname)s] [%(lineno)s] %(name)s: %(message)s"
+        }
+    },
+    "handlers": {
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "standard"
+        },
+        "file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "formatter": "standard",
+            "filename": "app.log",
+            "mode": "a"
+        },
+        "http": {
+            "level": "INFO",
+            "class": "logging.handlers.HTTPHandler",
+            "host": "loc.logger.services.local:50000",
+            "url": "/log?app=Mos.Passes",
+            "method": "POST",
+            "formatter": "standard"
+        }
+    },
+    "loggers": {
+        "": {
+            "handlers": [
+                "console",
+                "file",
+                "http"
+            ],
+            "level": "DEBUG",
+            "propagate": false
+        }
+    }
+}
