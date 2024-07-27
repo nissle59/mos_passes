@@ -4,7 +4,7 @@ import logging.config
 import sys
 
 log_config = json.load(open('logging.json', 'r'))
-#log_config['handlers']['http']['host'] = '10.8.0.5:50000'
+log_config['handlers']['http']['host'] = 'localhost:50000'
 logging.config.dictConfig(log_config)
 LOGGER = logging.getLogger(__name__)
 
