@@ -25,7 +25,7 @@ def docker_run(image, env: dict | None = None, command: str | None = None, autor
     s = 'docker run '
     if env:
         for e in env:
-            s += f'-e \'{env[e]}\' '
+            s += f'-e {e}=\'{env[e]}\' '
     if autoremove_container:
         s += f'--rm {image}'
     else:
