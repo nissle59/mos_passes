@@ -122,10 +122,12 @@ class MosPass:
 
 if __name__ == "__main__":
     pmos = MosPass('nixncom@gmail.com', 'qAzWsX159$$$1')
-    start_n = 1676856
+    start_n = 1677751
     stop_n = 2000000
     for i in range(start_n, stop_n):
         stat = pmos.get_pass_info(f"БА {i}")
         if isinstance(stat, dict):
-            print(stat)
+            print(f"БА {i}: {stat['vin']} :: {stat['regNum']} :: {stat['statusCode']}")
             asyncio.run(db.set_pass(stat))
+        elif isinstance(stat, None):
+            print(f'БА {i} Не существует')
