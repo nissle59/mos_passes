@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import subprocess
+import traceback
 from pathlib import Path
 import requests
 #from auth import AuthEMU
@@ -51,7 +52,7 @@ class MosPass:
                 ".AspNetCore.Cookies": cv
             }
         except Exception as e:
-            LOGGER.critical(e, exc_info=True)
+            traceback.print_exc()
             self.cookies = None
 
     def auth(self):
