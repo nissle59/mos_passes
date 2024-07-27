@@ -122,8 +122,8 @@ class MosPass:
 
 if __name__ == "__main__":
     pmos = MosPass('nixncom@gmail.com', 'qAzWsX159$$$1')
-    start_n = 1677805
-    stop_n = 2000000
+    start_n = 1
+    stop_n = 1676856
     for i in range(start_n, stop_n):
         stat = pmos.get_pass_info(f"БА {i}")
         if stat:
