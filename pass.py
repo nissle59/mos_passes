@@ -21,14 +21,18 @@ def run_command(command):
     return std.stdout.decode()
 
 
-def docker_run(image, env: dict | None = None, command: str | None = None):
+def docker_run(image, env: dict | None = None, command: str | None = None, autoremove_container = True):
     s = 'docker run '
     if env:
         for e in env:
             s += f'-e \'{env[e]}\' '
-    s += f'--rm {image}'
+    if autoremove_container:
+        s += f'--rm {image}'
+    else:
+        s += f'{image}'
     if command:
         s += f' {command}'
+    print(s)
     std = run_command(s)
     return std
 
