@@ -29,7 +29,7 @@ def docker_run(image, env: dict | None = None, command: str | None = None):
     s += f'--rm {image}'
     if command:
         s += f' {command}'
-    std = run_command()
+    std = run_command(s)
     return std
 
 
