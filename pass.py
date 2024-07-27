@@ -50,7 +50,8 @@ class MosPass:
             self.cookies = {
                 ".AspNetCore.Cookies": cv
             }
-        except:
+        except Exception as e:
+            LOGGER.critical(e, exc_info=True)
             self.cookies = None
 
     def auth(self):
