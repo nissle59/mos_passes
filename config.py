@@ -18,7 +18,7 @@ class MQ:
     password = 'rmpassword'
     port = 5672
     apiport = 15672
-    vhost = 'egts'
+    vhost = 'mos_passes'
     queue = 'urgent_q'
 
 
