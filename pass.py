@@ -122,8 +122,8 @@ class MosPass:
 
 if __name__ == "__main__":
     pmos = MosPass('nixncom@gmail.com', 'qAzWsX159$$$1')
-    start_n= 1
-    stop_n = 1677805
+    start_n= 1670000
+    stop_n = 1000000
     for i in range(start_n, stop_n):
         s = str(i)
         while len(s) < 7:
