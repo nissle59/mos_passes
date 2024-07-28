@@ -128,7 +128,7 @@ if __name__ == "__main__":
         s = str(i)
         while len(s) < 7:
             s = '0' + s
-        stat = pmos.get_pass_info(f"БА {i}")
+        stat = pmos.get_pass_info(f"БА {s}")
         if stat:
             if isinstance(stat, dict):
                 LOGGER.info(f"{pmos.total_passed} --- БА {i}: {stat['vin']} :: {stat['regNum']} :: {stat['statusCode']}")
