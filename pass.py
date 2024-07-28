@@ -124,7 +124,7 @@ if __name__ == "__main__":
     pmos = MosPass('nixncom@gmail.com', 'qAzWsX159$$$1')
     start_n= 1670000
     stop_n = 1000000
-    for i in range(start_n, stop_n):
+    for i in range(start_n, stop_n, -1):
         s = str(i)
         while len(s) < 7:
             s = '0' + s
