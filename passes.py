@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import subprocess
+import sys
 import traceback
 from pathlib import Path
 import requests
@@ -104,10 +105,13 @@ class MosPass:
         if status == 200:
             self.total_passed += 1
             self.fails = 0
-            return r.json()
+            res = r.json()
+            LOGGER.info(f"{self.total_passed} --- {pass_no}: {res['vin']} :: {res['regNum']} :: {res['statusCode']}")
+            return res
         elif status in [404, 400]:
             self.total_passed += 1
             self.fails = 0
+            LOGGER.info(f'{self.total_passed} --- {pass_no} Не существует')
             return None
         elif status == 401:
             self.fails += 1
@@ -118,6 +122,7 @@ class MosPass:
                 return self.get_pass_info(pass_no)
             else:
                 LOGGER.critical(f"Too much fails for {pass_no}, account {self.username}, total passed: {self.total_passed}")
+                sys.exit(1)
 
 
 if __name__ == "__main__":

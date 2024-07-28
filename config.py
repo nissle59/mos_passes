@@ -12,12 +12,14 @@ AUTH_IMAGE = 'mos-auth-local'
 
 class MQ:
     # host = 'localhost'
-    host = 'rmq.db.services.local'
+    # host = 'rmq.db.services.local'
+    host = 'localhost'
     user = 'rmuser'
     password = 'rmpassword'
     port = 5672
     apiport = 15672
     vhost = 'egts'
+    queue = 'urgent_q'
 
 
 DSN = 'postgresql://postgres:psqlpass@localhost/vindcgibdd'

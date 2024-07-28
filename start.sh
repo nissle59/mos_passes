@@ -1,2 +1,2 @@
 pip install -r requirements.txt
-python3 pass.py
+python3 main.py
