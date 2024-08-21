@@ -29,14 +29,14 @@ def docker_run(image, env: dict | None = None, command: str | None = None, autor
         for e in env:
             s += f'-e {e}=\'{env[e]}\' '
     if autoremove_container:
-        s += f'--rm {image}'
+        s += f'--network p_net --rm {image}'
     else:
-        s += f'{image}'
+        s += f'--network p_net {image}'
     if command:
         s += f' {command}'
     print(s)
-    std = run_command(s)
-    return std
+    res = run_command(s)
+    return res
 
 
 class MosPass:
@@ -48,27 +48,37 @@ class MosPass:
         self.session = requests.Session()
         try:
             cv = asyncio.run(db.get_account(username))[0]['cookie_value']
-            print(cv)
+            if cv:
+                print(cv)
+                self.cookies = {
+                    ".AspNetCore.Cookies": cv
+                }
+            else:
+                asyncio.run(self.auth())
+        except Exception as e:
+            traceback.print_exc()
+            self.cookies = None
+
+    async def auth(self):
+        cv = docker_run(
+            config.AUTH_IMAGE,
+            {
+                'USERNAME': self.username,
+                'PASSWORD': self.password,
+                'DSN' : 'postgresql://postgres:psqlpass@pg.db.services.local/vindcgibdd'
+            }
+        )
+        try:
+            cv = await db.get_account(self.username)
+            cv = cv[0]['cookie_value']
             self.cookies = {
                 ".AspNetCore.Cookies": cv
             }
         except Exception as e:
             traceback.print_exc()
-            self.cookies = None
 
-    def auth(self):
-        cv = docker_run(config.AUTH_IMAGE, {'USERNAME': self.username, 'PASSWORD': self.password})
-        # cv = run_command(
-        #     f"docker run -e USERNAME '{self.username}' -e PASSWORD '{self.password}' --rm {config.AUTH_IMAGE}")
-        self.cookies = {
-            ".AspNetCore.Cookies": cv
-        }
-        # self.a = AuthEMU(self.username, self.password)
-        # self.cookies = self.a.auth()
-        db.set_account(self.username, self.password, cv)
-        # json.dump(self.cookies, open(Path('cookies') / Path(f'{self.username}_cookies.json'), 'w'))
-
-    def get_pass_info(self, pass_no: str) -> dict | None:
+    async def get_pass_info(self, pass_no: str) -> dict | None:
+        print(pass_no)
         headers = {
             "Sec-Ch-Ua": "\"Not/A)Brand\";v=\"8\", \"Chromium\";v=\"126\"",
             "Accept": "application/json",
@@ -89,7 +99,7 @@ class MosPass:
         }
         if not self.cookies:
             # sys.exit(1)
-            self.auth()
+            await self.auth()
         r = self.session.get(
             url=f"https://lk.ovga.mos.ru/api/Pass/GetPassBySeriesAndNumber",
             params=params,
@@ -117,23 +127,24 @@ class MosPass:
             self.fails += 1
             print("Unauthorized")
             # sys.exit(1)
-            self.auth()
+            await self.auth()
             if self.fails <= 10:
-                return self.get_pass_info(pass_no)
+                return await self.get_pass_info(pass_no)
             else:
                 LOGGER.critical(f"Too much fails for {pass_no}, account {self.username}, total passed: {self.total_passed}")
                 sys.exit(1)
 
 
 if __name__ == "__main__":
-    pmos = MosPass('nixncom@gmail.com', 'qAzWsX159$$$1')
-    start_n= 1670000
-    stop_n = 1000000
-    for i in range(start_n, stop_n, -1):
+    pmos = MosPass('nixncom@gmail.com', 'qAzWsX159$$$2')
+    start_n= 1677805
+    stop_n = 1800000
+    step = 1
+    for i in range(start_n, stop_n, step):
         s = str(i)
         while len(s) < 7:
             s = '0' + s
-        stat = pmos.get_pass_info(f"БА {s}")
+        stat = asyncio.run(pmos.get_pass_info(f"БА {s}"))
         if stat:
             if isinstance(stat, dict):
                 LOGGER.info(f"{pmos.total_passed} --- БА {s}: {stat['vin']} :: {stat['regNum']} :: {stat['statusCode']}")

@@ -1,12 +1,22 @@
 import asyncio
 import datetime
 import logging
+import traceback
+
 import asyncpg
+import requests
+
 from asyncpg_utility import NamedParameterQuery, NamedParameterConnection
 
 from config import DSN
 
 LOGGER = logging.getLogger(__name__)
+
+
+def get_proxies():
+    url = 'http://ipArch.local:5558/'
+    r = requests.get(url)
+    return r.json()
 
 
 async def get_account(username=None):
@@ -24,6 +34,20 @@ async def get_account(username=None):
     for result in results:
         print(result)
     return results
+
+
+async def get_last_pass():
+    print('try to get last pass')
+    query = 'select "number" from passes.passes p order by "number" desc limit 1'
+    conn = await asyncpg.connect(DSN)
+    my_named_parameter_query = NamedParameterQuery(query)
+    my_named_parameter_conn = NamedParameterConnection(conn, my_named_parameter_query)
+    results = await my_named_parameter_conn.fetch()
+    try:
+        return int(results[0]['number'])
+    except:
+        traceback.print_exc()
+        return None
 
 
 async def set_account(username, password, cookie_value):

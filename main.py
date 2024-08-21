@@ -10,11 +10,15 @@ import db
 from passes import MosPass
 
 LOGGER = logging.getLogger(__name__)
-PMOS = MosPass('nixncom@gmail.com', 'qAzWsX159$$$1')
+acc = asyncio.run(db.get_account('nixncom@gmail.com'))
+print(acc)
+username = acc[0]['login']
+password = acc[0]['password']
+PMOS = MosPass(username, password)
 
 
 async def parse(pass_no):
-    stat = PMOS.get_pass_info(pass_no)
+    stat = await PMOS.get_pass_info(pass_no)
     if stat:
         if isinstance(stat, dict):
             await db.set_pass(stat)
