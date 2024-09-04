@@ -21,6 +21,7 @@ rabbit_config = {
 }
 pmos = MosPass('nixncom@gmail.com', 'qAzWsX159$$$3')
 
+
 def send_passes_to_rabbitmq(passes):
     try:
         # Установка соединения с RabbitMQ

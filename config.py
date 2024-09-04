@@ -23,5 +23,6 @@ class MQ:
 
 
 DSN = 'postgresql://postgres:psqlpass@localhost/vindcgibdd'
+dockerDSN = 'postgresql://postgres:psqlpass@pg.db.services.local/vindcgibdd'
 #DSN = 'postgresql://postgres:psqlpass@10.8.0.5/vindcgibdd'
 

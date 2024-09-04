@@ -5,17 +5,18 @@ import sys
 import traceback
 from pathlib import Path
 import requests
-#from auth import AuthEMU
+# from auth import AuthEMU
 import warnings
 import db
 import config
-
 
 LOGGER = logging.getLogger(__name__)
 warnings.filterwarnings("ignore")
 
 Path('sql').mkdir(exist_ok=True)
-#Path('../fails').mkdir(exist_ok=True)
+
+
+# Path('../fails').mkdir(exist_ok=True)
 
 
 def run_command(command):
@@ -23,7 +24,7 @@ def run_command(command):
     return std.stdout.decode()
 
 
-def docker_run(image, env: dict | None = None, command: str | None = None, autoremove_container = True):
+def docker_run(image, env: dict | None = None, command: str | None = None, autoremove_container=True):
     s = 'docker run '
     if env:
         for e in env:
@@ -61,11 +62,12 @@ class MosPass:
 
     async def auth(self):
         cv = docker_run(
-            config.AUTH_IMAGE,
-            {
+            image=config.AUTH_IMAGE,
+            autoremove_container=False,
+            env={
                 'USERNAME': self.username,
                 'PASSWORD': self.password,
-                'DSN' : 'postgresql://postgres:psqlpass@pg.db.services.local/vindcgibdd'
+                'DSN': config.dockerDSN
             }
         )
         try:
@@ -131,13 +133,14 @@ class MosPass:
             if self.fails <= 10:
                 return await self.get_pass_info(pass_no)
             else:
-                LOGGER.critical(f"Too much fails for {pass_no}, account {self.username}, total passed: {self.total_passed}")
+                LOGGER.critical(
+                    f"Too much fails for {pass_no}, account {self.username}, total passed: {self.total_passed}")
                 sys.exit(1)
 
 
 if __name__ == "__main__":
     pmos = MosPass('nixncom@gmail.com', 'qAzWsX159$$$2')
-    start_n= 1677805
+    start_n = 1677805
     stop_n = 1800000
     step = 1
     for i in range(start_n, stop_n, step):
@@ -147,7 +150,8 @@ if __name__ == "__main__":
         stat = asyncio.run(pmos.get_pass_info(f"БА {s}"))
         if stat:
             if isinstance(stat, dict):
-                LOGGER.info(f"{pmos.total_passed} --- БА {s}: {stat['vin']} :: {stat['regNum']} :: {stat['statusCode']}")
+                LOGGER.info(
+                    f"{pmos.total_passed} --- БА {s}: {stat['vin']} :: {stat['regNum']} :: {stat['statusCode']}")
                 asyncio.run(db.set_pass(stat))
         else:
             LOGGER.info(f'{pmos.total_passed} --- БА {s} Не существует')
